@@ -110,10 +110,75 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        board.setViewingPerspective(side);
+
+        // 2 Steps:
+        // 1. Merge the adjacent tiles
+        // 2. Move all tiles to top
+
+        // Merge the adjacent tiles
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = board.size() - 1; j >= 0; j--){
+                Tile tileIJ = board.tile(i, j);
+                if (tileIJ == null){
+                    continue;
+                } else {
+                    for (int k = j; k >= 0; k--){
+                        if (k == j){
+                            continue;
+                        }
+                        Tile tileIK = board.tile(i, k);
+                        if (tileIK == null) {
+                            continue;
+                        } else {
+                            if (tileIK.value() == tileIJ.value()) {
+                                board.move(i, j, tileIK);
+                                score += tileIK.value() * 2;
+                                changed = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Move all tiles to top
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = board.size() - 1; j >= 0; j--){
+                Tile tileIJ = board.tile(i, j);
+                if (tileIJ != null){
+                    continue;
+                } else {
+                    for (int k = j; k >= 0; k--){
+                        if (k == j){
+                            continue;
+                        }
+                        Tile tileIK = board.tile(i, k);
+                        if (tileIK != null) {
+                            board.move(i, j, tileIK);
+                            changed = true;
+                            break;
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+
+        board.setViewingPerspective(Side.NORTH);
+
+        // It's pretty much a confusion to decide which method to call.
+        // For example, when I would like merge the tiles,
+        // the correct is to call non-static method of Board class called move.
+        // And I spend a lot of time to use non-static method of Tile class called merge.
+        // It's a little bit confusing in a system that you don't know a lot,
+        // but have the task to modify it, because you don't know where to start.
+        
         checkGameOver();
         if (changed) {
             setChanged();
