@@ -155,7 +155,8 @@ public class Model extends Observable {
     public static boolean maxTileExists(Board b) {
         for (int i = 0; i < b.size(); i++){
             for (int j = 0; j < b.size(); j++){
-                if (b.tile(i, j).value() == MAX_PIECE){
+                Tile tile = b.tile(i, j);
+                if (tile != null && tile.value() == MAX_PIECE){
                     return true;
                 }
             }
@@ -170,7 +171,6 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
         if (emptySpaceExists(b)){
             return true;
         }
@@ -185,19 +185,16 @@ public class Model extends Observable {
                 numberSheet[i][j] = -1;
             }
         }
+
         for (int i = 1; i < b.size() + 1; i++){
             for (int j = 1; j < b.size() + 1; j++){
-                numberSheet[i][j] = b.tile(i - 1, j - 1).value();
+                Tile tile = b.tile(i - 1, j - 1);
+                if (tile != null) {
+                    numberSheet[i][j] = tile.value();
+                }
             }
         }
 
-        // Show matrix
-        for (int i = 0; i < b.size() + 2; i++){
-            for (int j = 0; j < b.size() + 2; j++){
-                System.out.print(numberSheet[i][j] + " ");
-            }
-            System.out.println();
-        }
         // Try every tile
         for (int i = 1; i < b.size() + 1; i++){
             for (int j = 1; j < b.size() + 1; j++){
