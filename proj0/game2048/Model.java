@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author MikuINF
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -137,7 +137,13 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++){
+            for (int j = 0; j < b.size(); j++){
+                if (b.tile(i, j) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -147,7 +153,13 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        for (int i = 0; i < b.size(); i++){
+            for (int j = 0; j < b.size(); j++){
+                if (b.tile(i, j).value() == MAX_PIECE){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +171,45 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if (emptySpaceExists(b)){
+            return true;
+        }
+
+        // Init a matrix for adjacent number processing.
+        int broadSize = b.size();
+        int[][] numberSheet = new int[broadSize + 2][broadSize + 2];
+
+        // Init the matrix
+        for (int i = 0; i < b.size() + 2; i++){
+            for (int j = 0; j < b.size() + 2; j++){
+                numberSheet[i][j] = -1;
+            }
+        }
+        for (int i = 1; i < b.size() + 1; i++){
+            for (int j = 1; j < b.size() + 1; j++){
+                numberSheet[i][j] = b.tile(i - 1, j - 1).value();
+            }
+        }
+
+        // Show matrix
+        for (int i = 0; i < b.size() + 2; i++){
+            for (int j = 0; j < b.size() + 2; j++){
+                System.out.print(numberSheet[i][j] + " ");
+            }
+            System.out.println();
+        }
+        // Try every tile
+        for (int i = 1; i < b.size() + 1; i++){
+            for (int j = 1; j < b.size() + 1; j++){
+                boolean isequalUp = (numberSheet[i][j] == numberSheet[i - 1][j]);
+                boolean isequalDown = (numberSheet[i][j] == numberSheet[i + 1][j]);
+                boolean isequalLeft = (numberSheet[i][j] == numberSheet[i][j - 1]);
+                boolean isequalRight = (numberSheet[i][j] == numberSheet[i][j + 1]);
+                if (isequalUp || isequalDown || isequalLeft || isequalRight){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
